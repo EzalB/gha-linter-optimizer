@@ -12,7 +12,7 @@ type Workflow struct {
 
 type Job struct {
 	Name  	string 				`yaml:"name"`
-	RunsOn  string 				`yaml:"runs"`
+	RunsOn 	string   			`yaml:"runs-on"`
 	Steps 	[]Step 				`yaml:"steps"`
 	Needs   []string 			`yaml:"needs,omitempty"`
 	Env     map[string]string 	`yaml:"env,omitempty"`
@@ -21,7 +21,7 @@ type Job struct {
 type Step struct {
 	Name string `yaml:"name"`
 	Uses string `yaml:"uses"`
-	Run  string `yaml:"runs-on"`
+	Run  string `yaml:"run"`
 	If   string `yaml:"if"`
 }
 
