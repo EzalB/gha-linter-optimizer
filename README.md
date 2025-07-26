@@ -10,11 +10,12 @@ Have you ever stared at your GitHub Actions and wondered:
 
 - “What in the YAML is going on here?”
 - “Why did my build just spontaneously combust?”
-- “Is copy-pasting from StackOverflow a valid CI strategy?”
+- “Is copy-pasting from Stack Overflow a valid CI strategy?”
 
 Well, not anymore.
 
-This tool is your friendly, opinionated robot buddy that **parses**, **lints**, **analyzes**, and **sarcastically judges** your GitHub Actions workflows. It also drops you a friendly PR comment (with just a *hint* of sass) and helps you fix things. Automatically. Because that's the point.
+This tool is your friendly, opinionated robot buddy that **parses**, **lints**, **analyzes**, and sometimes *roasts* your GitHub Actions workflows. It even drops a friendly comment on your PRs — all while keeping things fun (and working).
+
 
 ---
 
@@ -22,14 +23,13 @@ This tool is your friendly, opinionated robot buddy that **parses**, **lints**, 
 
 - ✅ **Linting** for common anti-patterns and misconfigurations  
 - 🛠 **Auto-fix suggestions** (coming soon: AI-generated apologies)
-- 💬 **PR comment integration** with Markdown reports
-- 📦 **GitHub Marketplace ready**
-- 🐛 **YAML syntax error detection** (like a therapist for malformed colons)
+- 💬 **PR comment integration** with Markdown + JSON reports
+- 🧙 **Enhanced Lint Rules**: Detect dead jobs, zombie steps, unreferenced envs, and more
 - 🧪 **Unit-tested** lint rules so you sleep well at night
-- 📊 **Markdown & JSON** reporters for humans and robots
-- 🔍 **Verbose mode** for when you want to feel like a hacker
-- 🧠 **Enhanced rules**: catch duplicate jobs, unreferenced steps, zombie workflows, and more
-- 😤 **Opinionated**: because life is too short for ambiguous CI
+- 🐛 **YAML syntax error detection** (like a therapist for malformed colons)
+- 📦 **GitHub Actions Compatible**
+- 🔍 **Verbose Debugging Mode** for CLI 
+- 🎯 **Opinionated Defaults** – because ambiguous CI pipelines are worse than merge conflicts
 
 ---
 
@@ -37,16 +37,16 @@ This tool is your friendly, opinionated robot buddy that **parses**, **lints**, 
 
 This tool:
 
-1. Recursively scans your repo for `.github/workflows/*.yml`
-2. Parses and validates your YAML files (and roasts them if they’re bad)
-3. Runs a series of linting rules on them
-4. Generates a nice Markdown/JSON report
-5. Comments the results on your PR (if you're into that)
-6. Exits with non-zero if it found issues (CI/CD approved)
+1. Recursively scans your repository for `.github/workflows/*.yml`
+2. Parses and validates each YAML file
+3. Runs linting rules and collects diagnostics
+4. Generates Markdown and/or JSON reports
+5. Posts comments on the PR (if enabled)
+6. Exits with `1` if critical issues are found
 
 ---
 
-## 🧪 Usage (Local Dev)
+## 🧪 How to use (CLI - Local Dev)
 
 ```bash
 go run main.go --path=.github/workflows --format=markdown --verbose
@@ -54,7 +54,7 @@ go run main.go --path=.github/workflows --format=markdown --verbose
 
 ---
 
-## 🧪 GitHub Actions Usage
+## 🧪 How to use (GitHub Actions)
 
 name: GHA Linter
 
@@ -70,24 +70,34 @@ jobs:
       - name: 🧾 Checkout repo
         uses: actions/checkout@v4
 
-      - name: 🔍 Run GHA Linter
+      - name: 🔍 Lint GitHub Workflows
         uses: your-org/gha-linter@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
 
 ---
 
 ## 🛠 Inputs
 
-Name	Description	                    Required	Default
+**Name	Description	                    Required	Default**
 token	GitHub token for PR comment	      ✅	        –
 path	Path to your workflows	          ❌	       .github/workflows
 format	Output format (markdown/json)	  ❌	       markdown
 
 ---
 
-## 📣 Contributing
-Want to add your own lint rules? Just fork and PR — we’ll lint your lint. Please don’t break the linters that lint your linters.
+## 🧠 Linting Rules Covered
+
+- 🌀 Empty or unused jobs
+- 🔁 Duplicate job IDs
+- 🧟 Zombie steps (defined but never triggered)
+- 🔗 Broken uses: or run: references
+- ❌ Deprecated set-output or unsecure environment usages
+- ⛔ Missing required fields (runs-on, steps, etc.)
+- 👻 Unused matrix/strategy values
+
+Want to write your own? Add a file to rules/ and implement engine.Rule interface.
 
 ---
 
@@ -99,9 +109,7 @@ Want to add your own lint rules? Just fork and PR — we’ll lint your lint. Pl
 ---
 
 ## 🧹 Future Roadmap
-- ✅ Auto-fix YAML patterns with suggestions
-- 🧠 AI-generated explanations
-- 🦾 Integrate with Dependabot and Renovate
+- ✅ Auto-fix functionality (for selected rules)
 - 🔥 Linting GitHub Action outputs, expressions, and matrix configs
 
 ---
@@ -111,7 +119,7 @@ MIT – because we believe in free software.
 
 ---
 
-## 🥲 Final Thoughts
+## ⌛ Final Thoughts
 Your GitHub Actions shouldn’t require therapy. Use this linter.
 
 ---

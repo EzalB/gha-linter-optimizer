@@ -11,14 +11,18 @@ type Workflow struct {
 }
 
 type Job struct {
-	Name  string `yaml:"name"`
-	Steps []Step `yaml:"steps"`
+	Name  	string 				`yaml:"name"`
+	RunsOn  string 				`yaml:"runs"`
+	Steps 	[]Step 				`yaml:"steps"`
+	Needs   []string 			`yaml:"needs,omitempty"`
+	Env     map[string]string 	`yaml:"env,omitempty"`
 }
 
 type Step struct {
 	Name string `yaml:"name"`
 	Uses string `yaml:"uses"`
 	Run  string `yaml:"run"`
+	If   string `yaml:"if"`
 }
 
 func ParseWorkflow(path string) (*Workflow, error) {
