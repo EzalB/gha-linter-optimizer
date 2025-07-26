@@ -1,0 +1,13 @@
+name: "GitHub Actions Linter"
+description: "Lints your GitHub workflow files for best practices and optimization"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+inputs:
+  path:
+    description: "Workflow directory"
+    required: false
+    default: ".github/workflows"
+branding:
+  icon: 'check-circle'
+  color: 'blue'
