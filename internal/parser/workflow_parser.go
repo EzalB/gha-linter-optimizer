@@ -21,7 +21,7 @@ type Job struct {
 type Step struct {
 	Name string `yaml:"name"`
 	Uses string `yaml:"uses"`
-	Run  string `yaml:"run"`
+	Run  string `yaml:"run-on"`
 	If   string `yaml:"if"`
 }
 
