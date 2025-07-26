@@ -12,7 +12,6 @@ import (
 func GetAllRules() []rules.Rule {
 	return []rules.Rule{
 		rules.LatestTagRule{},
-		rules.CacheRule{},
 		rules.NameRule{},
 		rules.EmptyJobsRule{},
 		rules.DuplicateJobIDRule{},
