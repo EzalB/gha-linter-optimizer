@@ -22,6 +22,10 @@ func main() {
 		utils.Log.Error("❌ Workflow path not specified.")
 		os.Exit(1)
 	}
+	if cfg.Verbose {
+		utils.InitVerboseLogger()
+		utils.Log.Info("🔍 Verbose mode enabled")
+	}
 
 	// Run linting engine
 	results := engine.RunLint(cfg.Path)

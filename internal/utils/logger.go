@@ -13,3 +13,9 @@ func InitLogger() {
 		Level: slog.LevelInfo,
 	}))
 }
+
+func InitVerboseLogger() {
+	Log = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
+}

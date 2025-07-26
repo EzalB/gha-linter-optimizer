@@ -10,6 +10,7 @@ type Config struct {
 	Path     string
 	Repo     string
 	PRNumber int
+	Verbose  bool
 }
 
 func Load() *Config {
@@ -17,6 +18,8 @@ func Load() *Config {
 
 	flag.StringVar(&cfg.Path, "path", ".github/workflows", "Path to workflows")
 	flag.StringVar(&cfg.Repo, "repo", os.Getenv("GITHUB_REPOSITORY"), "GitHub repo (e.g., user/repo)")
+	flag.BoolVar(&cfg.Verbose, "verbose", false, "Enable verbose logging")
+
 	pr := os.Getenv("PR_NUMBER")
 	if pr == "" {
 		pr = "0"

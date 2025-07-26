@@ -2,6 +2,7 @@ package engine
 
 import (
 	"path/filepath"
+	"fmt"
 
 	"github.com/EzalB/gha-linter-optimizer/internal/parser"
 	"github.com/EzalB/gha-linter-optimizer/internal/rules"
@@ -23,7 +24,8 @@ func RunLint(path string) []string {
 	for _, file := range files {
 		wf, err := parser.ParseWorkflow(file)
 		if err != nil {
-			utils.Log.Warn("Failed to parse workflow", "file", file, "error", err)
+			utils.Log.Warn("❌ Failed to parse workflow", "file", file, "error", err.Error())
+			allResults = append(allResults, fmt.Sprintf("Parsing error in %s: %v", filepath.Base(file), err))
 			continue
 		}
 
