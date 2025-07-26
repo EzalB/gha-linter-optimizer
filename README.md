@@ -93,9 +93,7 @@ format	Output format (markdown/json)	  ❌	       markdown
 - 🔁 Duplicate job IDs
 - 🧟 Zombie steps (defined but never triggered)
 - 🔗 Broken uses: or run: references
-- ❌ Deprecated set-output or unsecure environment usages
 - ⛔ Missing required fields (runs-on, steps, etc.)
-- 👻 Unused matrix/strategy values
 
 Want to write your own? Add a file to rules/ and implement engine.Rule interface.
 
