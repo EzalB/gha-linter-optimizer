@@ -2,14 +2,14 @@
 package utils
 
 import (
-	"github.com/sirupsen/logrus"
+	"log/slog"
+	"os"
 )
 
-var Log = logrus.New()
+var Log *slog.Logger
 
 func InitLogger() {
-	Log.SetFormatter(&logrus.TextFormatter{
-		FullTimestamp: true,
-	})
-	Log.SetLevel(logrus.DebugLevel)
+	Log = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}))
 }

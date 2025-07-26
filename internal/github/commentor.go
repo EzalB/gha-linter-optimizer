@@ -21,6 +21,10 @@ type GitHubCommenter struct {
 }
 
 func NewGitHubCommenter(repo, prNumber string) *GitHubCommenter {
+	if os.Getenv("GITHUB_TOKEN") == "" {
+		panic("GITHUB_TOKEN environment variable not set")
+	}
+	
 	return &GitHubCommenter{
 		Token:     os.Getenv("GITHUB_TOKEN"),
 		Repo:      repo,

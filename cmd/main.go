@@ -30,7 +30,7 @@ func main() {
 	markdownReport := reporter.GenerateMarkdownReport(results)
 	jsonReport, err := reporter.GenerateJSONReport(results)
 	if err != nil {
-		utils.Log.Errorf("Failed to generate JSON report: %v", err)
+		utils.Log.Error("Failed to generate JSON report", "error", err)
 	}
 
 
@@ -47,20 +47,18 @@ func main() {
 	// PR comment integration (if env vars are set)
 	repo := os.Getenv("GITHUB_REPOSITORY")
 	prNumStr := os.Getenv("PR_NUMBER") // Usually passed in workflow_dispatch or issue_comment
-	githubToken := os.Getenv("GITHUB_TOKEN")
 
-	if repo != "" && prNumStr != "" && githubToken != "" {
+	if repo != "" && prNumStr != "" {
 		prNum, err := strconv.Atoi(prNumStr)
 		if err != nil {
-			utils.Log.Errorf("Invalid PR number: %s", prNumStr)
+			utils.Log.Error("Invalid PR number", "prNumStr", prNumStr)
 			os.Exit(1)
 		}
 
 		commenter := github.NewGitHubCommenter(repo, strconv.Itoa(prNum))
 		err = commenter.PostOrUpdateComment(markdownReport)
 		if err != nil {
-			utils.Log.Errorf("Failed to post comment: %v", err)
-			os.Exit(1)
+			utils.Log.Error("Failed to post PR comment", "error", err)
 		}
 		utils.Log.Info("💬 PR comment posted successfully.")
 	} else {

@@ -4,9 +4,14 @@ import (
 	"encoding/json"
 )
 
-func GenerateJSONReport(issues []string) (string, error) {
-	out, err := json.MarshalIndent(map[string]interface{}{
-		"issues": issues,
-	}, "", "  ")
-	return string(out), err
+func GenerateJSONReport(results []string) (string, error) {
+	data := map[string]interface{}{
+		"issues": results,
+		"count":  len(results),
+	}
+	bytes, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }
