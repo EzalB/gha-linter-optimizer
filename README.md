@@ -2,6 +2,7 @@
 
 > Because your YAML deserves better than silence… and because broken CI pipelines on Fridays are a crime.
 
+
 ---
 
 ## 🧠 Why This Exists
@@ -31,6 +32,7 @@ This tool is your friendly, opinionated robot buddy that **parses**, **lints**, 
 - 🔍 **Verbose Debugging Mode** for CLI 
 - 🎯 **Opinionated Defaults** – because ambiguous CI pipelines are worse than merge conflicts
 
+
 ---
 
 ## 🚀 How It Works
@@ -44,6 +46,7 @@ This tool:
 5. Posts comments on the PR (if enabled)
 6. Exits with `1` if critical issues are found
 
+
 ---
 
 ## 🧪 How to use (CLI - Local Dev)
@@ -51,6 +54,7 @@ This tool:
 ```bash
 go run main.go --path=.github/workflows --format=markdown --verbose
 ```
+
 
 ---
 
@@ -80,10 +84,12 @@ jobs:
 
 ## 🛠 Inputs
 
-**Name	Description	                    Required	Default**
-token	GitHub token for PR comment	      ✅	        –
-path	Path to your workflows	          ❌	       .github/workflows
-format	Output format (markdown/json)	  ❌	       markdown
+| **Name** | **Description** | **Required** | **Default** |
+| :------- | :-------------- | :----------: | :---------- |
+| token | GitHub token for PR comment | ✅ | – |
+| path | Path to your workflows | ❌ | .github/workflows |
+| format | Output format (markdown/json) | ❌ | markdown |
+
 
 ---
 
@@ -97,6 +103,7 @@ format	Output format (markdown/json)	  ❌	       markdown
 
 Want to write your own? Add a file to rules/ and implement engine.Rule interface.
 
+
 ---
 
 ## 🧙 Tips
@@ -104,11 +111,13 @@ Want to write your own? Add a file to rules/ and implement engine.Rule interface
 - Use --format=json for CI integrations
 - Wanna test PR comment behavior? Push to a fork and set the GITHUB_TOKEN in your local env
 
+
 ---
 
 ## 🧹 Future Roadmap
 - ✅ Auto-fix functionality (for selected rules)
 - 🔥 Linting GitHub Action outputs, expressions, and matrix configs
+
 
 ---
 
