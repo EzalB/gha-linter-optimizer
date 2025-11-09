@@ -18,6 +18,7 @@ func GetAllRules() []rules.Rule {
 		rules.ZombieStepsRule{},
 		rules.BrokenReferencesRule{},
 		rules.MissingRequiredFieldsRule{},
+		rules.SecretsExposureRule{},
 	}
 }
 

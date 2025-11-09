@@ -10,7 +10,7 @@ import (
 type LatestTagRule struct{}
 
 func (r LatestTagRule) Name() string       { return "Latest Tag Rule" }
-func (r LatestTagRule) Description() string { return "Disallow @latest in reusable actions" }
+func (r LatestTagRule) Description() string { return "Detects @latest tag for steps in actions" }
 
 func (r LatestTagRule) Apply(wf *parser.Workflow) []string {
 	var warnings []string
