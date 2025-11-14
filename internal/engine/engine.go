@@ -1,8 +1,8 @@
 package engine
 
 import (
-	"path/filepath"
-	"fmt"
+	// "path/filepath"
+	// "fmt"
 
 	"github.com/EzalB/gha-linter-optimizer/internal/parser"
 	"github.com/EzalB/gha-linter-optimizer/internal/rules"
@@ -23,7 +23,7 @@ func GetAllRules() []rules.Rule {
 }
 
 func RunLint(path string) []rules.Issue {
-	files := parser.GetWorkflowFiles(path)
+	files := utils.GetWorkflowFiles(path)
 	var all []rules.Issue
 	// allResults := []string{}
 

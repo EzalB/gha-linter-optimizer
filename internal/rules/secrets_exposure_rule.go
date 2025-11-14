@@ -34,7 +34,7 @@ func (r SecretsExposureRule) Apply(wf *parser.Workflow) []string {
 			for _, pattern := range patterns {
 				if pattern.MatchString(line) {
 					lineNumber := wf.FindLineNumber(line)
-					if lineNumber == 1 {
+					if lineNumber == -1 {
 						findings = append(findings, fmt.Sprintf("🚨 Job '%s': possible secret or token detected in step '%s'", jobID, step.Name))
 					} else {
 						findings = append(findings, fmt.Sprintf("🚨 Job '%s': possible secret or token detected in step '%s' (line %d)", jobID, step.Name, lineNumber))
