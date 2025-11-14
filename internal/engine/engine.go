@@ -11,35 +11,34 @@ import (
 
 func GetAllRules() []rules.Rule {
 	return []rules.Rule{
-		rules.LatestTagRule{},
+		// rules.LatestTagRule{},
 		rules.NameRule{},
-		rules.EmptyJobsRule{},
-		rules.DuplicateJobIDRule{},
-		rules.ZombieStepsRule{},
-		rules.BrokenReferencesRule{},
-		rules.MissingRequiredFieldsRule{},
-		rules.SecretsExposureRule{},
+		// rules.EmptyJobsRule{},
+		// rules.DuplicateJobIDRule{},
+		// rules.ZombieStepsRule{},
+		// rules.BrokenReferencesRule{},
+		// rules.MissingRequiredFieldsRule{},
+		// rules.SecretsExposureRule{},
 	}
 }
 
-func RunLint(path string) []string {
-	files := utils.GetWorkflowFiles(path)
-	allResults := []string{}
+func RunLint(path string) []rules.Issue {
+	files := parser.GetWorkflowFiles(path)
+	var all []rules.Issue
+	// allResults := []string{}
 
 	for _, file := range files {
 		wf, err := parser.ParseWorkflow(file)
 		if err != nil {
 			utils.Log.Warn("❌ Failed to parse workflow", "file", file, "error", err.Error())
-			allResults = append(allResults, fmt.Sprintf("Parsing error in %s: %v", filepath.Base(file), err))
+			// all = append(all, fmt.Sprintf("Parsing error in %s: %v", filepath.Base(file), err))
 			continue
 		}
 
 		for _, rule := range GetAllRules() {
-			results := rule.Apply(wf)
-			for _, res := range results {
-				allResults = append(allResults, filepath.Base(file)+": "+res)
-			}
+			issues := rule.Apply(wf)
+			all = append(all, issues...)
 		}
 	}
-	return allResults
+	return all
 }
