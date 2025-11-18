@@ -11,14 +11,14 @@ import (
 
 func GetAllRules() []rules.Rule {
 	return []rules.Rule{
-		// rules.LatestTagRule{},
+		rules.LatestTagRule{},
 		rules.NameRule{},
-		// rules.EmptyJobsRule{},
-		// rules.DuplicateJobIDRule{},
-		// rules.ZombieStepsRule{},
-		// rules.BrokenReferencesRule{},
-		// rules.MissingRequiredFieldsRule{},
-		// rules.SecretsExposureRule{},
+		rules.EmptyJobsRule{},
+		rules.DuplicateJobIDRule{},
+		rules.ZombieStepsRule{},
+		rules.BrokenReferencesRule{},
+		rules.MissingRequiredFieldsRule{},
+		rules.SecretsExposureRule{},
 	}
 }
 

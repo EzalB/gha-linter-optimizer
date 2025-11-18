@@ -46,10 +46,21 @@ func (g *GitHubCommenter) BuildPRComment(issues []rules.Issue) string {
 	b.WriteString(botMarker + "\n")
 	b.WriteString("### 🚨 GitHub Actions Lint Report\n\n")
 
+	repo := os.Getenv("GITHUB_REPOSITORY")
+	defaultBranch := os.Getenv("GITHUB_BASE_REF") // for PRs
+	if defaultBranch == "" {
+		defaultBranch = "main" // fallback
+	}
+	
 	for _, i := range issues {
+		fileLink := fmt.Sprintf(
+			"https://github.com/%s/blob/%s/%s#L%d",
+			repo, defaultBranch, i.File, i.Line,
+		)
+		
 		b.WriteString(fmt.Sprintf(
-			"- **%s**: %s _(📄 `%s`:%d)_\n",
-			i.Rule, i.Message, i.File, i.Line,
+			"- **%s**: %s ([`%s:%d`](%s))\n",
+			i.Rule, i.Message, i.File, i.Line, fileLink,
 		))
 	}
 
