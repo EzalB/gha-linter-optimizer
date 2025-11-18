@@ -73,6 +73,14 @@ func main() {
 		utils.Log.Info("Skipping PR comment (missing GITHUB_REPOSITORY or PR_NUMBER or GITHUB_TOKEN)")
 	}
 
+	sarifReport, err := reporter.GenerateSarif(results)
+	if err != nil {
+		utils.Log.Error("Failed to generate SARIF", "error", err)
+	} else {
+		os.WriteFile("gha-linter.sarif", []byte(sarifReport), 0644)
+	}
+
+
 	// Exit non-zero if issues found
 	if len(results) > 0 {
 		os.Exit(1)

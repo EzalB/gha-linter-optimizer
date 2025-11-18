@@ -1,0 +1,148 @@
+{
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "gha-linter",
+          "informationUri": "https://github.com/EzalB/gha-linter-optimizer"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "Name Rule",
+          "level": "warning",
+          "message": {
+            "text": "Job 'cleanup' has no name"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 31
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Name Rule",
+          "level": "warning",
+          "message": {
+            "text": "Job 'cleanup': step 'echo \"::set-output name=result::done\"' has no name"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 38
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Name Rule",
+          "level": "warning",
+          "message": {
+            "text": "Job 'matrix-build' has no name"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 40
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Name Rule",
+          "level": "warning",
+          "message": {
+            "text": "Job 'build' has no name"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 9
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Name Rule",
+          "level": "warning",
+          "message": {
+            "text": "Job 'build': step 'echo \"Building project...\"' has no name"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 16
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Name Rule",
+          "level": "warning",
+          "message": {
+            "text": "Job 'deploy' has no name"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 18
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Name Rule",
+          "level": "warning",
+          "message": {
+            "text": "Job 'deploy': step 'echo \"Deploying...\"' has no name"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 23
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
