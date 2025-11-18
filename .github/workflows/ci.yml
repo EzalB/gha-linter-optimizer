@@ -27,42 +27,43 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request && github.event.pull_request.number }}
+        continue-on-error: true
 
-      # - name: Save SARIF file
-      #   if: always()
-      #   run: |
-      #     echo "📄 Writing SARIF..."
-      #     # If your linter writes to ./gha-linter.sarif
-      #     if [ ! -f gha-linter.sarif ]; then
-      #       echo "{}" > gha-linter.sarif
-      #     fi
+      - name: Save SARIF file
+        if: always()
+        run: |
+          echo "📄 Writing SARIF..."
+          # If your linter writes to ./gha-linter.sarif
+          if [ ! -f gha-linter.sarif ]; then
+            echo "{}" > gha-linter.sarif
+          fi
 
-      # # Upload SARIF to GitHub Security
-      # - name: Upload SARIF results
-      #   if: always()
-      #   uses: github/codeql-action/upload-sarif@v3
-      #   with:
-      #     sarif_file: gha-linter.sarif
+      # Upload SARIF to GitHub Security
+      - name: Upload SARIF results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: gha-linter.sarif
 
-      # # Annotate PR with GitHub Summary (Checks Tab)
-      # - name: Add annotations to GitHub Checks Summary
-      #   if: always()
-      #   run: |
-      #     echo "### 🔍 GHA Linter Summary" >> $GITHUB_STEP_SUMMARY
-      #     echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-      #     cat gha-linter-summary.txt 2>/dev/null || echo "No summary available"
-      #     echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      # Annotate PR with GitHub Summary (Checks Tab)
+      - name: Add annotations to GitHub Checks Summary
+        if: always()
+        run: |
+          echo "### 🔍 GHA Linter Summary" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat gha-linter-summary.txt 2>/dev/null || echo "No summary available"
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-      # # Fail the job if linter reported issues > 0
-      # - name: Fail build if issues found
-      #   if: always()
-      #   run: |
-      #     if [ -f issue_count.txt ]; then
-      #       COUNT=$(cat issue_count.txt)
-      #       echo "Issues found: $COUNT"
-      #       if [ "$COUNT" -gt 0 ]; then
-      #         echo "❌ Failing because linter found issues"
-      #         exit 1
-      #       fi
-      #     fi
+      # Fail the job if linter reported issues > 0
+      - name: Fail build if issues found
+        if: always()
+        run: |
+          if [ -f issue_count.txt ]; then
+            COUNT=$(cat issue_count.txt)
+            echo "Issues found: $COUNT"
+            if [ "$COUNT" -gt 0 ]; then
+              echo "❌ Failing because linter found issues"
+              exit 1
+            fi
+          fi
 
