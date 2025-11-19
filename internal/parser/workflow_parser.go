@@ -9,6 +9,7 @@ import (
 type Workflow struct {
 	Jobs 		map[string]Job	`yaml:"jobs"`
 	Path 		string          `yaml:"-"`
+	FilePath 	string 			`yaml:"-"`
 	RawLines 	[]string        `yaml:"-"`
 }
 
@@ -22,12 +23,13 @@ type Job struct {
 }
 
 type Step struct {
-	Name string            `yaml:"name"`
-	Uses string            `yaml:"uses"`
-	Run  string            `yaml:"run"`
-	If   string            `yaml:"if,omitempty"`
-	Env  map[string]string `yaml:"env,omitempty"`
-	Line int               `yaml:"-"` // line number in YAML
+	Name	string            `yaml:"name"`
+	Uses 	string            `yaml:"uses"`
+	Run  	string            `yaml:"run"`
+	If   	string            `yaml:"if,omitempty"`
+	Env  	map[string]string `yaml:"env,omitempty"`
+	Line 	int               `yaml:"-"` // line number in YAML
+	Raw		string            `yaml:"-"`
 }
 
 func ParseWorkflow(path string) (*Workflow, error) {
@@ -38,6 +40,7 @@ func ParseWorkflow(path string) (*Workflow, error) {
 
 	wf := &Workflow{
 		Path:     path,
+		FilePath: path,
 		RawLines: strings.Split(string(data), "\n"), // <-- Store all lines
 		Jobs:     make(map[string]Job),
 	}
@@ -72,6 +75,7 @@ func ParseWorkflow(path string) (*Workflow, error) {
 						for _, stepNode := range val.Content {
 							step := Step{
 								Line: stepNode.Line,
+								Raw:  reconstructStepYAML(stepNode),
 							}
 
 							for x := 0; x < len(stepNode.Content); x += 2 {
@@ -125,4 +129,9 @@ func (wf *Workflow) FindLineNumber(search string) int {
 		}
 	}
 	return -1
+}
+
+func reconstructStepYAML(node *yaml.Node) string {
+	raw, _ := yaml.Marshal(node)
+	return string(raw)
 }

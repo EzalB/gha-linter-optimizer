@@ -13,8 +13,8 @@ type SecretsExposureRule struct{}
 func (r SecretsExposureRule) Name() string       { return "Secrets Exposure Rule" }
 func (r SecretsExposureRule) Description() string { return "Detects potential secret, password, or token exposures in workflows" }
 
-func (r SecretsExposureRule) Apply(wf *parser.Workflow) []string {
-	var findings []string
+func (r SecretsExposureRule) Apply(wf *parser.Workflow) []Issue {
+	var issues []Issue
 
 	// Common secret patterns (tokens, keys, passwords, API keys, etc.)
 	patterns := []*regexp.Regexp{
@@ -30,32 +30,56 @@ func (r SecretsExposureRule) Apply(wf *parser.Workflow) []string {
 
 	for jobID, job := range wf.Jobs {
 		for _, step := range job.Steps {
-			line := strings.TrimSpace(step.Run + step.Uses + step.Name)
+			content := strings.Join([]string{step.Run, step.Uses, step.Raw}, "\n")
+			// line := strings.TrimSpace(step.Run + step.Uses + step.Name)
+			
 			for _, pattern := range patterns {
-				if pattern.MatchString(line) {
-					lineNumber := wf.FindLineNumber(line)
-					if lineNumber == -1 {
-						findings = append(findings, fmt.Sprintf("🚨 Job '%s': possible secret or token detected in step '%s'", jobID, step.Name))
-					} else {
-						findings = append(findings, fmt.Sprintf("🚨 Job '%s': possible secret or token detected in step '%s' (line %d)", jobID, step.Name, lineNumber))
-					}
+				if pattern.MatchString(content) {
+					issues = append(issues, Issue{
+						Rule:     r.Name(),
+						Message:  fmt.Sprintf("Job '%s': possible secret or token detected in step '%s'", jobID, step.Name),
+						File:     wf.Path,
+						Line:     step.Line,
+						Severity: "error",
+					})
 					break
 				}
 			}
 
 			// Check environment variables defined in steps (possible plaintext secrets)
-			for k, v := range step.Env {
-				keyLower := strings.ToLower(k)
+			for key, val := range step.Env {
+
+				keyLower := strings.ToLower(key)
 				if strings.Contains(keyLower, "secret") ||
 					strings.Contains(keyLower, "token") ||
 					strings.Contains(keyLower, "password") ||
 					strings.Contains(keyLower, "key") {
-					lineNumber := wf.FindLineNumber(v)
-					findings = append(findings, fmt.Sprintf("🔒 Job '%s': environment variable '%s' may contain sensitive data (line %d)", jobID, k, lineNumber))
+
+					issues = append(issues, Issue{
+						Rule:     r.Name(),
+						Message:  fmt.Sprintf("Job '%s': environment variable '%s' may contain sensitive data", jobID, key),
+						File:     wf.Path,
+						Line:     step.Line, // best available context
+						Severity: "error",
+					})
+				}
+
+				// Also detect if value itself looks like a secret
+				for _, pattern := range patterns {
+					if pattern.MatchString(val) {
+						issues = append(issues, Issue{
+							Rule:     r.Name(),
+							Message:  fmt.Sprintf("Job '%s': environment variable '%s' contains a possible secret", jobID, key),
+							File:     wf.Path,
+							Line:     step.Line,
+							Severity: "error",
+						})
+						break
+					}
 				}
 			}
 		}
 	}
 
-	return findings
+	return issues
 }

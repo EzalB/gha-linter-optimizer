@@ -9,21 +9,36 @@ import (
 
 type CacheRule struct{}
 
-func (r CacheRule) Name() string       { return "Cache Rule" }
-func (r CacheRule) Description() string { return "Recommend usage of actions/cache for dependencies" }
+func (r CacheRule) Name() string {
+	return "Cache Rule"
+}
+func (r CacheRule) Description() string {
+	return "Recommend usage of actions/cache for dependencies"
+}
 
-func (r CacheRule) Apply(wf *parser.Workflow) []string {
-	var findings []string
+func (r CacheRule) Apply(wf *parser.Workflow) []Issue {
+	var issues []Issue
+
 	for jobID, job := range wf.Jobs {
 		usesCache := false
+		
 		for _, step := range job.Steps {
 			if strings.Contains(step.Uses, "actions/cache") {
 				usesCache = true
+				break
 			}
 		}
+		
 		if !usesCache {
-			findings = append(findings, fmt.Sprintf("Job '%s' does not use 'actions/cache'", jobID))
+			issues = append(issues, Issue{
+				Rule:     r.Name(),
+				Message:  fmt.Sprintf("Job '%s' does not use 'actions/cache' (recommended to speed up CI)", jobID),
+				File:     wf.FilePath,
+				Line:     job.Line, // Best available line number for the job
+				Severity: "info",
+			})
 		}
 	}
-	return findings
+
+	return issues
 }

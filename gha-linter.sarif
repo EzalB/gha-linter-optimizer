@@ -10,38 +10,19 @@
       },
       "results": [
         {
-          "ruleId": "Name Rule",
-          "level": "warning",
+          "ruleId": "Secrets Exposure Rule",
+          "level": "error",
           "message": {
-            "text": "Job 'cleanup' has no name"
+            "text": "Job 'run-linter': environment variable 'GITHUB_TOKEN' may contain sensitive data"
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": ".github\\workflows\\test-gha.yml"
+                  "uri": ".github\\workflows\\ci.yml"
                 },
                 "region": {
-                  "startLine": 31
-                }
-              }
-            }
-          ]
-        },
-        {
-          "ruleId": "Name Rule",
-          "level": "warning",
-          "message": {
-            "text": "Job 'cleanup': step 'echo \"::set-output name=result::done\"' has no name"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": ".github\\workflows\\test-gha.yml"
-                },
-                "region": {
-                  "startLine": 38
+                  "startLine": 22
                 }
               }
             }
@@ -137,6 +118,101 @@
                 },
                 "region": {
                   "startLine": 23
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Name Rule",
+          "level": "warning",
+          "message": {
+            "text": "Job 'cleanup' has no name"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 31
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Name Rule",
+          "level": "warning",
+          "message": {
+            "text": "Job 'cleanup': step 'echo \"::set-output name=result::done\"' has no name"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 38
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Missing Required Fields Rule",
+          "level": "error",
+          "message": {
+            "text": "Job 'cleanup' is missing the required 'runs-on' field"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 31
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Secrets Exposure Rule",
+          "level": "error",
+          "message": {
+            "text": "Job 'deploy': possible secret or token detected in step 'Publish build'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 26
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "Secrets Exposure Rule",
+          "level": "error",
+          "message": {
+            "text": "Job 'deploy': environment variable 'SLACK_TOKEN' may contain sensitive data"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": ".github\\workflows\\test-gha.yml"
+                },
+                "region": {
+                  "startLine": 26
                 }
               }
             }

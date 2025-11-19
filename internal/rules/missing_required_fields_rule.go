@@ -8,18 +8,36 @@ import (
 
 type MissingRequiredFieldsRule struct{}
 
-func (r MissingRequiredFieldsRule) Name() string       { return "Missing Required Fields Rule" }
-func (r MissingRequiredFieldsRule) Description() string { return "Ensure required fields like runs-on and steps exist" }
+func (r MissingRequiredFieldsRule) Name() string {
+	return "Missing Required Fields Rule"
+}
+func (r MissingRequiredFieldsRule) Description() string {
+	return "Ensure required fields like runs-on and steps exist"
+}
 
-func (r MissingRequiredFieldsRule) Apply(wf *parser.Workflow) []string {
-	var warnings []string
+func (r MissingRequiredFieldsRule) Apply(wf *parser.Workflow) []Issue  {
+	var issues []Issue
+
 	for jobID, job := range wf.Jobs {
 		if job.RunsOn == "" {
-			warnings = append(warnings, fmt.Sprintf("Job '%s' missing 'runs-on' field", jobID))
+			issues = append(issues, Issue{
+				Rule:     r.Name(),
+				Message:  fmt.Sprintf("Job '%s' is missing the required 'runs-on' field", jobID),
+				File:     wf.FilePath,
+				Line:     job.Line,
+				Severity: "error",
+			})
 		}
+
 		if len(job.Steps) == 0 {
-			warnings = append(warnings, fmt.Sprintf("Job '%s' missing 'steps' section", jobID))
+			issues = append(issues, Issue{
+				Rule:     r.Name(),
+				Message:  fmt.Sprintf("Job '%s' is missing the required 'steps' section", jobID),
+				File:     wf.FilePath,
+				Line:     job.Line,
+				Severity: "error",
+			})
 		}
 	}
-	return warnings
+	return issues
 }
