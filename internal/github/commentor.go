@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/EzalB/gha-linter-optimizer/internal/rules"
 )
 
 const botMarker = "<!-- gha-linter-bot-comment -->"
@@ -21,12 +23,13 @@ type GitHubCommenter struct {
 }
 
 func NewGitHubCommenter(repo, prNumber string) *GitHubCommenter {
-	if os.Getenv("GITHUB_TOKEN") == "" {
-		panic("GITHUB_TOKEN environment variable not set")
+	token := os.Getenv("GITHUB_TOKEN")
+	if token == "" {
+		panic("GITHUB_TOKEN not set")
 	}
 	
 	return &GitHubCommenter{
-		Token:     os.Getenv("GITHUB_TOKEN"),
+		Token:     token,
 		Repo:      repo,
 		PRNumber:  prNumber,
 		APIURL:    "https://api.github.com",
@@ -34,7 +37,37 @@ func NewGitHubCommenter(repo, prNumber string) *GitHubCommenter {
 	}
 }
 
-func (g *GitHubCommenter) PostOrUpdateComment(markdownReport string) error {
+func (g *GitHubCommenter) BuildPRComment(issues []rules.Issue) string {
+	if len(issues) == 0 {
+		return botMarker + "\n" + "✅ No workflow issues found!"
+	}
+
+	var b strings.Builder
+	b.WriteString(botMarker + "\n")
+	b.WriteString("### 🚨 GitHub Actions Lint Report\n\n")
+
+	repo := os.Getenv("GITHUB_REPOSITORY")
+	defaultBranch := os.Getenv("GITHUB_BASE_REF") // for PRs
+	if defaultBranch == "" {
+		defaultBranch = "main" // fallback
+	}
+	
+	for _, i := range issues {
+		fileLink := fmt.Sprintf(
+			"https://github.com/%s/blob/%s/%s#L%d",
+			repo, defaultBranch, i.File, i.Line,
+		)
+		
+		b.WriteString(fmt.Sprintf(
+			"- **%s**: %s ([`%s:%d`](%s))\n",
+			i.Rule, i.Message, i.File, i.Line, fileLink,
+		))
+	}
+
+	return b.String()
+}
+
+func (g *GitHubCommenter) PostOrUpdateComment(commentBody string) error {
 	url := fmt.Sprintf("%s/repos/%s/issues/%s/comments", g.APIURL, g.Repo, g.PRNumber)
 
 	// Fetch existing comments
@@ -48,10 +81,12 @@ func (g *GitHubCommenter) PostOrUpdateComment(markdownReport string) error {
 	defer resp.Body.Close()
 
 	bodyBytes, _ := io.ReadAll(resp.Body)
+
 	var comments []struct {
 		ID   int    `json:"id"`
 		Body string `json:"body"`
 	}
+
 	json.Unmarshal(bodyBytes, &comments)
 
 	botCommentID := -1
@@ -62,7 +97,7 @@ func (g *GitHubCommenter) PostOrUpdateComment(markdownReport string) error {
 		}
 	}
 
-	commentBody := botMarker + "\n" + markdownReport
+	//commentBody := botMarker + "\n" + markdownReport
 	payload := map[string]string{"body": commentBody}
 	payloadBytes, _ := json.Marshal(payload)
 
@@ -78,6 +113,7 @@ func (g *GitHubCommenter) PostOrUpdateComment(markdownReport string) error {
 	req.Header.Set("Authorization", "Bearer "+g.Token)
 	req.Header.Set("User-Agent", g.UserAgent)
 	req.Header.Set("Content-Type", "application/json")
+
 	_, err = http.DefaultClient.Do(req)
 	return err
 }

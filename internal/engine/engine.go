@@ -1,8 +1,8 @@
 package engine
 
 import (
-	"path/filepath"
-	"fmt"
+	// "path/filepath"
+	// "fmt"
 
 	"github.com/EzalB/gha-linter-optimizer/internal/parser"
 	"github.com/EzalB/gha-linter-optimizer/internal/rules"
@@ -18,27 +18,27 @@ func GetAllRules() []rules.Rule {
 		rules.ZombieStepsRule{},
 		rules.BrokenReferencesRule{},
 		rules.MissingRequiredFieldsRule{},
+		rules.SecretsExposureRule{},
 	}
 }
 
-func RunLint(path string) []string {
+func RunLint(path string) []rules.Issue {
 	files := utils.GetWorkflowFiles(path)
-	allResults := []string{}
+	var all []rules.Issue
+	// allResults := []string{}
 
 	for _, file := range files {
 		wf, err := parser.ParseWorkflow(file)
 		if err != nil {
 			utils.Log.Warn("❌ Failed to parse workflow", "file", file, "error", err.Error())
-			allResults = append(allResults, fmt.Sprintf("Parsing error in %s: %v", filepath.Base(file), err))
+			// all = append(all, fmt.Sprintf("Parsing error in %s: %v", filepath.Base(file), err))
 			continue
 		}
 
 		for _, rule := range GetAllRules() {
-			results := rule.Apply(wf)
-			for _, res := range results {
-				allResults = append(allResults, filepath.Base(file)+": "+res)
-			}
+			issues := rule.Apply(wf)
+			all = append(all, issues...)
 		}
 	}
-	return allResults
+	return all
 }

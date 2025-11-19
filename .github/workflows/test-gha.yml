@@ -1,0 +1,57 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:   # ❌ Missing "name" field → triggers NameRule
+    runs-on: ubuntu-latest
+
+    # ❌ Missing actions/cache → triggers CacheRule
+    # ❌ Uses floating @latest tag → triggers LatestTagRule
+    steps:
+      - uses: actions/checkout@latest   # avoid floating tags
+      - run: echo "Building project..."
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # ❌ Unnamed step → triggers NameRule
+      # ❌ Unused job (if not referenced by others) → triggers EmptyJobsRule
+      - run: echo "Deploying..."
+        if: false   # 🧟 Step condition always false → triggers ZombieStepsRule
+
+      - name: Publish build
+        run: echo "Deploy completed"
+        env:
+          SLACK_TOKEN: "xoxb-1234567890-abcdef"   # 🔒 Triggers SecretsLeakRule
+
+  cleanup:    # 🔁 Duplicate job ID can be tested by copy-pasting this section again
+    runs-on: ""
+    # ⛔ Missing required fields like valid runs-on value
+    steps:
+        - name: Clean up
+          run: echo "Cleaning temporary files"
+        # ❌ Deprecated syntax usage
+        - run: echo "::set-output name=result::done"   # DeprecatedSetOutputRule
+
+  matrix-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.20, 1.21]
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Build
+        run: echo "Building for OS"
+
+      - name: Check Unused Matrix Values
+        run: echo "Hello World"  # 👻 Matrix values (os, go-version) not referenced properly

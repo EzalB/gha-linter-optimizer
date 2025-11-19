@@ -51,6 +51,7 @@ func main() {
 	// PR comment integration (if env vars are set)
 	repo := os.Getenv("GITHUB_REPOSITORY")
 	prNumStr := os.Getenv("PR_NUMBER") // Usually passed in workflow_dispatch or issue_comment
+	// sha := os.Getenv("GITHUB_SHA")
 
 	if repo != "" && prNumStr != "" {
 		prNum, err := strconv.Atoi(prNumStr)
@@ -60,7 +61,10 @@ func main() {
 		}
 
 		commenter := github.NewGitHubCommenter(repo, strconv.Itoa(prNum))
-		err = commenter.PostOrUpdateComment(markdownReport)
+		// err = commenter.PostOrUpdateComment(markdownReport)
+		commentBody := commenter.BuildPRComment(results)
+		err = commenter.PostOrUpdateComment(commentBody)
+		
 		if err != nil {
 			utils.Log.Error("Failed to post PR comment", "error", err)
 		}
@@ -68,6 +72,14 @@ func main() {
 	} else {
 		utils.Log.Info("Skipping PR comment (missing GITHUB_REPOSITORY or PR_NUMBER or GITHUB_TOKEN)")
 	}
+
+	sarifReport, err := reporter.GenerateSarif(results)
+	if err != nil {
+		utils.Log.Error("Failed to generate SARIF", "error", err)
+	} else {
+		os.WriteFile("gha-linter.sarif", []byte(sarifReport), 0644)
+	}
+
 
 	// Exit non-zero if issues found
 	if len(results) > 0 {
